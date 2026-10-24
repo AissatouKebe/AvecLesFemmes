@@ -84,7 +84,7 @@
         "@php bin/console doctrine:database:create"
     ],
     "kebeaissatou:cache:clear": "@php bin/console cache:clear",
-    "kebeaissatou:make:entity": "@php bin/console make:entity",
+    "kebeaissatou:make:entity": "App\\Composer\\Console::makeEntity",
     "kebeaissatou:migration": [
         "@php bin/console make:migration --no-interaction",
         "@php bin/console doctrine:migrations:migrate --no-interaction"
