@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\DiscriminatorMap(['hebdomadaire' => SeanceHebdomadaire::class, 'mensuelle' => SeanceMensuelle::class])]
 abstract class Seance
 {
-    abstract public function prochaineDate(): \DateTimeImmutable;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,7 +24,7 @@ abstract class Seance
     private ?Campagne $campagne = null;
 
     #[ORM\ManyToOne]
-    private ?Membre $beneficiare = null;
+    private ?Membre $beneficiaire = null;
 
     public function getId(): ?int
     {
@@ -56,15 +55,17 @@ abstract class Seance
         return $this;
     }
 
-    public function getBeneficiare(): ?Membre
+    public function getBeneficiaire(): ?Membre
     {
-        return $this->beneficiare;
+        return $this->beneficiaire;
     }
 
-    public function setBeneficiare(?Membre $beneficiare): static
+    public function setBeneficiaire(?Membre $beneficiaire): static
     {
-        $this->beneficiare = $beneficiare;
+        $this->beneficiaire = $beneficiaire;
 
         return $this;
     }
+    abstract public function prochaineDate(): \DateTimeImmutable;
+
 }
