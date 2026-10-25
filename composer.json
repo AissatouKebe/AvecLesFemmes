@@ -83,6 +83,7 @@
         "@php bin/console doctrine:database:drop --if-exists --force",
         "@php bin/console doctrine:database:create"
     ],
+    "kebeaissatou:fixtures": "@php bin/console doctrine:fixtures:load --no-interaction",
     "kebeaissatou:cache:clear": "@php bin/console cache:clear",
     "kebeaissatou:make:entity": "App\\Composer\\Console::makeEntity",
     "kebeaissatou:migration": [
