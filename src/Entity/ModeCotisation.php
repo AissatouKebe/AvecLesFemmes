@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ModeCotisationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ModeCotisationRepository::class)]
@@ -24,6 +26,17 @@ class ModeCotisation
     #[ORM\ManyToOne(inversedBy: 'modeCotisations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Membre $membre = null;
+
+    /**
+     * @var Collection<int, Cotisation>
+     */
+    #[ORM\OneToMany(targetEntity: Cotisation::class, mappedBy: 'modeCotisation')]
+    private Collection $cotisations;
+
+    public function __construct()
+    {
+        $this->cotisations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,6 +75,36 @@ class ModeCotisation
     public function setMembre(?Membre $membre): static
     {
         $this->membre = $membre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Cotisation>
+     */
+    public function getCotisations(): Collection
+    {
+        return $this->cotisations;
+    }
+
+    public function addCotisation(Cotisation $cotisation): static
+    {
+        if (!$this->cotisations->contains($cotisation)) {
+            $this->cotisations->add($cotisation);
+            $cotisation->setModeCotisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCotisation(Cotisation $cotisation): static
+    {
+        if ($this->cotisations->removeElement($cotisation)) {
+            // set the owning side to null (unless already changed)
+            if ($cotisation->getModeCotisation() === $this) {
+                $cotisation->setModeCotisation(null);
+            }
+        }
 
         return $this;
     }
