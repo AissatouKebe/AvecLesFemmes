@@ -27,9 +27,16 @@ class Membre extends User
     #[ORM\OneToMany(targetEntity: ModeCotisation::class, mappedBy: 'membre')]
     private Collection $modeCotisations;
 
+    /**
+     * @var Collection<int, Pret>
+     */
+    #[ORM\OneToMany(targetEntity: Pret::class, mappedBy: 'emprunteur')]
+    private Collection $prets;
+
     public function __construct()
     {
         $this->modeCotisations = new ArrayCollection();
+        $this->prets = new ArrayCollection();
     }
 
     public function getRole(): ?Role
@@ -92,6 +99,36 @@ class Membre extends User
             // set the owning side to null (unless already changed)
             if ($modeCotisation->getMembre() === $this) {
                 $modeCotisation->setMembre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pret>
+     */
+    public function getPrets(): Collection
+    {
+        return $this->prets;
+    }
+
+    public function addPret(Pret $pret): static
+    {
+        if (!$this->prets->contains($pret)) {
+            $this->prets->add($pret);
+            $pret->setEmprunteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePret(Pret $pret): static
+    {
+        if ($this->prets->removeElement($pret)) {
+            // set the owning side to null (unless already changed)
+            if ($pret->getEmprunteur() === $this) {
+                $pret->setEmprunteur(null);
             }
         }
 

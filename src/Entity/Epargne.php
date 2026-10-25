@@ -16,10 +16,17 @@ class Epargne extends Campagne
     #[ORM\OneToMany(targetEntity: TrancheTaux::class, mappedBy: 'epargne')]
     private Collection $tranchesTaux;
 
+    /**
+     * @var Collection<int, Pret>
+     */
+    #[ORM\OneToMany(targetEntity: Pret::class, mappedBy: 'epargne')]
+    private Collection $prets;
+
     public function __construct()
     {
         parent::__construct();
         $this->tranchesTaux = new ArrayCollection();
+        $this->prets = new ArrayCollection();
     }
 
     /**
@@ -46,6 +53,36 @@ class Epargne extends Campagne
             // set the owning side to null (unless already changed)
             if ($tranchesTaux->getEpargne() === $this) {
                 $tranchesTaux->setEpargne(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pret>
+     */
+    public function getPrets(): Collection
+    {
+        return $this->prets;
+    }
+
+    public function addPret(Pret $pret): static
+    {
+        if (!$this->prets->contains($pret)) {
+            $this->prets->add($pret);
+            $pret->setEpargne($this);
+        }
+
+        return $this;
+    }
+
+    public function removePret(Pret $pret): static
+    {
+        if ($this->prets->removeElement($pret)) {
+            // set the owning side to null (unless already changed)
+            if ($pret->getEpargne() === $this) {
+                $pret->setEpargne(null);
             }
         }
 
