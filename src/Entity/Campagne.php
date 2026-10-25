@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CampagneRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CampagneRepository::class)]
@@ -29,14 +31,25 @@ abstract class Campagne
     private ?float $montant = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createAt = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $updateAt = null;
+    private ?\DateTime $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'campagnes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Groupement $groupement = null;
+
+      /**
+     * @var Collection<int, ModeCotisation>
+     */
+    #[ORM\OneToMany(targetEntity: ModeCotisation::class, mappedBy: 'campagne')]
+    private Collection $modeCotisations;
+
+    public function __construct()
+    {
+        $this->modeCotisations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,26 +104,26 @@ abstract class Campagne
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createAt;
+        return $this->createdAt;
     }
 
-    public function setCreateAt(\DateTimeImmutable $createAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createAt = $createAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTime
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdateAt(?\DateTime $updateAt): static
+    public function setUpdatedAt(?\DateTime $updatedAt): static
     {
-        $this->updateAt = $updateAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -123,6 +136,36 @@ abstract class Campagne
     public function setGroupement(?Groupement $groupement): static
     {
         $this->groupement = $groupement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ModeCotisation>
+     */
+    public function getModeCotisations(): Collection
+    {
+        return $this->modeCotisations;
+    }
+
+    public function addModeCotisation(ModeCotisation $modeCotisation): static
+    {
+        if (!$this->modeCotisations->contains($modeCotisation)) {
+            $this->modeCotisations->add($modeCotisation);
+            $modeCotisation->setCampagne($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModeCotisation(ModeCotisation $modeCotisation): static
+    {
+        if ($this->modeCotisations->removeElement($modeCotisation)) {
+            // set the owning side to null (unless already changed)
+            if ($modeCotisation->getCampagne() === $this) {
+                $modeCotisation->setCampagne(null);
+            }
+        }
 
         return $this;
     }
