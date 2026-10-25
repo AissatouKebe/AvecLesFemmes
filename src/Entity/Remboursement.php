@@ -26,7 +26,7 @@ class Remboursement
     private ?Pret $pret = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $datePaiement = null;
+    private ?\DateTime $datePaiement = null;
 
     /**
      * @var Collection<int, Amende>
@@ -82,12 +82,12 @@ class Remboursement
         return $this;
     }
 
-    public function getDatePaiement(): ?float
+    public function getDatePaiement(): ?\DateTime
     {
         return $this->datePaiement;
     }
 
-    public function setDatePaiement(?float $datePaiement): static
+    public function setDatePaiement(?\DateTime $datePaiement): static
     {
         $this->datePaiement = $datePaiement;
 
