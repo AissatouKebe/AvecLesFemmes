@@ -24,10 +24,10 @@ abstract class User
     private ?string $telephone = null;
 
     #[ORM\Column(length: 250, nullable: true)]
-    private ?string $Adresse = null;
+    private ?string $adresse = null;
 
     #[ORM\Column(length: 100, unique:true)]
-    private ?string $Login = null;
+    private ?string $login = null;
 
     #[ORM\Column(length: 100)]
     private ?string $password = null;
@@ -61,26 +61,26 @@ abstract class User
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getadresse(): ?string
     {
-        return $this->Adresse;
+        return $this->adresse;
     }
 
-    public function setAdresse(?string $Adresse): static
+    public function setAdresse(?string $adresse): static
     {
-        $this->Adresse = $Adresse;
+        $this->adresse = $adresse;
 
         return $this;
     }
 
-    public function getLogin(): ?string
+    public function getlogin(): ?string
     {
-        return $this->Login;
+        return $this->login;
     }
 
-    public function setLogin(string $Login): static
+    public function setlogin(string $login): static
     {
-        $this->Login = $Login;
+        $this->login = $login;
 
         return $this;
     }
