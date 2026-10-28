@@ -11,14 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 class Membre extends User
 {
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Role $role = null;
 
     #[ORM\ManyToOne]
     private ?Fonction $fonction = null;
 
     #[ORM\ManyToOne(inversedBy: 'membres')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Groupement $groupement = null;
 
     /**
