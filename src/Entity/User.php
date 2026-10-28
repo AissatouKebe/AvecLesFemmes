@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'utilisateur')]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap(['membre' => Membre::class])]
+#[ORM\DiscriminatorMap(['membre' => Membre::class, 'supadmin' => SupAdmin::class])]
 abstract class User
 {
     #[ORM\Id]
