@@ -2,7 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Campagne;
+use App\Entity\Epargne;
+use App\Entity\Tontine;
 use App\Entity\Membre;
 use App\Entity\SeanceHebdomadaire;
 use App\Entity\SeanceMensuelle;
@@ -23,23 +24,23 @@ class SeanceFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $tontine = $this->getReference(CampagneFixtures::TONTINE, Campagne::class);
+        $tontine = $this->getReference(CampagneFixtures::TONTINE, Tontine::class);
         foreach (['2026-01-05', '2026-02-05', '2026-03-05'] as $i => $date) {
             $seance = (new SeanceMensuelle())
                 ->setCampagne($tontine)
                 ->setDateSeance(new \DateTime($date))
                 ->setBeneficiaire($this->getReference(UserFixtures::MEMBRE_PREFIX . $i, Membre::class));
             $manager->persist($seance);
-            $this->addReference(self::TONTINE_PREFIX . $i, $seance, [Seance::class]);
+            $tontine = $this->getReference(CampagneFixtures::TONTINE, Tontine::class);
         }
 
-        $epargne = $this->getReference(CampagneFixtures::EPARGNE, Campagne::class);
+        $epargne = $this->getReference(CampagneFixtures::EPARGNE, Epargne::class);
         foreach (['2026-01-05', '2026-01-12', '2026-01-19'] as $i => $date) {
             $seance = (new SeanceHebdomadaire())
                 ->setCampagne($epargne)
                 ->setDateSeance(new \DateTime($date));
             $manager->persist($seance);
-            $this->addReference(self::EPARGNE_PREFIX . $i, $seance, [Seance::class]);
+            $epargne = $this->getReference(CampagneFixtures::EPARGNE, Epargne::class);
         }
 
         $manager->flush();

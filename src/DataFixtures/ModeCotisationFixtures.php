@@ -2,7 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Campagne;
+use App\Entity\Epargne;
+use App\Entity\Tontine;
 use App\Entity\Membre;
 use App\Entity\ModeCotisation;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,8 +21,8 @@ class ModeCotisationFixtures extends Fixture implements DependentFixtureInterfac
 
     public function load(ObjectManager $manager): void
     {
-        foreach ([CampagneFixtures::TONTINE, CampagneFixtures::EPARGNE] as $campagneRef) {
-            $campagne = $this->getReference($campagneRef, Campagne::class);
+        foreach ([CampagneFixtures::TONTINE => Tontine::class, CampagneFixtures::EPARGNE => Epargne::class] as $campagneRef => $campagneClasse) {
+            $campagne = $this->getReference($campagneRef, $campagneClasse);
 
             for ($i = 0; $i < 5; $i++) {
                 $membre = $this->getReference(UserFixtures::MEMBRE_PREFIX . $i, Membre::class);
