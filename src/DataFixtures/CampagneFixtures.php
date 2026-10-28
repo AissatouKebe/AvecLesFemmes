@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Epargne;
 use App\Entity\Exercice;
 use App\Entity\Tontine;
+use App\Entity\Campagne;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -39,7 +40,7 @@ class CampagneFixtures extends Fixture implements DependentFixtureInterface
         foreach ([self::TONTINE => $tontine, self::EPARGNE => $epargne] as $reference => $campagne) {
             $campagne->setExercice($exercice)->setGroupement($groupement);
             $manager->persist($campagne);
-            $this->addReference($reference, $campagne);
+            $this->addReference($reference, $campagne, [Campagne::class]);
         }
 
         $manager->flush();

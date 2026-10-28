@@ -6,6 +6,7 @@ use App\Entity\Campagne;
 use App\Entity\Membre;
 use App\Entity\SeanceHebdomadaire;
 use App\Entity\SeanceMensuelle;
+use App\Entity\Seance;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -29,7 +30,7 @@ class SeanceFixtures extends Fixture implements DependentFixtureInterface
                 ->setDateSeance(new \DateTime($date))
                 ->setBeneficiaire($this->getReference(UserFixtures::MEMBRE_PREFIX . $i, Membre::class));
             $manager->persist($seance);
-            $this->addReference(self::TONTINE_PREFIX . $i, $seance);
+            $this->addReference(self::TONTINE_PREFIX . $i, $seance, [Seance::class]);
         }
 
         $epargne = $this->getReference(CampagneFixtures::EPARGNE, Campagne::class);
@@ -38,7 +39,7 @@ class SeanceFixtures extends Fixture implements DependentFixtureInterface
                 ->setCampagne($epargne)
                 ->setDateSeance(new \DateTime($date));
             $manager->persist($seance);
-            $this->addReference(self::EPARGNE_PREFIX . $i, $seance);
+            $this->addReference(self::EPARGNE_PREFIX . $i, $seance, [Seance::class]);
         }
 
         $manager->flush();
