@@ -26,8 +26,8 @@
             <nav aria-label="Navigation principale">
                 <ul class="nav">
                     <li><a href="{{ path('app_groupement_index') }}"{% if route starts with 'app_groupement' %} aria-current="page"{% endif %}>Groupements</a></li>
-                    <li><a href="#">Exercices</a></li>
-                    <li><a href="#">Campagnes</a></li>
+                    <li><a href="{{ path('app_exercice_index') }}"{% if route starts with 'app_exercice' %} aria-current="page"{% endif %}>Exercices</a></li>
+                    <li><a href="{{ path('app_campagne_index') }}"{% if route starts with 'app_campagne' %} aria-current="page"{% endif %}>Campagnes</a></li>
                 </ul>
             </nav>
 
