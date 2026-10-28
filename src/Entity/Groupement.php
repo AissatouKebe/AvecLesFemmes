@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\GroupementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Enum\StatutExercice;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupementRepository::class)]
@@ -34,6 +35,7 @@ class Groupement
      * @var Collection<int, Exercice>
      */
     #[ORM\OneToMany(targetEntity: Exercice::class, mappedBy: 'groupement', orphanRemoval: true)]
+    #[ORM\OrderBy(['dateDebut' => 'DESC'])]
     private Collection $exercices;
 
     #[ORM\Column(length: 20)]
@@ -178,5 +180,16 @@ class Groupement
         $this->adresse = $adresse;
 
         return $this;
+    }
+
+    public function getExerciceEnCours(): ?Exercice
+    {
+        foreach ($this->exercices as $exercice) {
+            if ($exercice->getStatut() === StatutExercice::ENCOURS) {
+                return $exercice;
+            }
+        }
+
+        return null;
     }
 }
