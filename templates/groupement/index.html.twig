@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Groupements | Avec les femmes{% endblock %}
+
+{% block body %}
+<main class="contenu">
+    <div class="tete-page">
+        <div>
+            <h1>Groupements</h1>
+            <p class="sous-titre">{{ groupements|length }} groupement{{ groupements|length > 1 ? 's' : '' }} suivi{{ groupements|length > 1 ? 's' : '' }}</p>
+        </div>
+    </div>
+
+    <section class="panneau" aria-labelledby="titre-liste">
+        <h2 id="titre-liste" class="visuellement-cache">Liste des groupements</h2>
+
+        <div class="defilement">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Groupement</th>
+                        <th scope="col">Téléphone</th>
+                        <th scope="col">Exercice en cours</th>
+                        <th scope="col" class="nombre">Exercices</th>
+                        <th scope="col"><span class="visuellement-cache">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for g in groupements %}
+                    <tr>
+                        <td>
+                            <a class="nom-groupement" href="{{ path('app_groupement_show', {id: g.id}) }}">{{ g.nom }}</a>
+
+                            <span class="discret">{{ g.adresse }}</span>
+                        </td>
+                        <td>{{ g.tel }}</td>
+                        <td>
+                            {% if g.statutLabel %}
+                                <span class="statut statut--{{ g.statutValue }}">{{ g.statutLabel }}</span>
+                                <span class="discret">depuis le {{ g.exerciceDebut|date('d/m/Y') }}</span>
+                            {% else %}
+                                <span class="discret">Aucun exercice en cours</span>
+                            {% endif %}
+                        </td>
+                        <td class="nombre">{{ g.nombreExercices }}</td>
+                        <td><a href="{{ path('app_groupement_show', {id: g.id}) }}">Voir la fiche</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun groupement pour l'instant.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% endblock %}
