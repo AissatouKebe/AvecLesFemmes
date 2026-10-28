@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Campagnes | Avec les femmes{% endblock %}
+
+{% block body %}
+<main class="contenu">
+    <div class="tete-page">
+        <div>
+            <h1>Campagnes</h1>
+            <p class="sous-titre">{{ campagnes|length }} campagne{{ campagnes|length > 1 ? 's' : '' }} (épargnes et tontines)</p>
+        </div>
+    </div>
+
+    <section class="panneau" aria-labelledby="titre-liste">
+        <h2 id="titre-liste" class="visuellement-cache">Liste des campagnes</h2>
+
+        <div class="defilement">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Campagne</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Groupement</th>
+                        <th scope="col">Exercice</th>
+                        <th scope="col">Période</th>
+                        <th scope="col" class="nombre">Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for c in campagnes %}
+                    <tr>
+                        <td><span class="nom-groupement">{{ c.nom }}</span></td>
+                        <td>{{ c.type }}</td>
+                        <td><a href="{{ path('app_groupement_show', {id: c.groupementId}) }}">{{ c.groupementNom }}</a></td>
+                        <td>{{ c.exerciceDebut|date('d/m/Y') }} – {{ c.exerciceFin|date('d/m/Y') }}</td>
+                        <td>
+                            {{ c.dateDebut|date('d/m/Y') }}
+                            {% if c.dateFin %}– {{ c.dateFin|date('d/m/Y') }}{% else %}<span class="discret">sans date de fin</span>{% endif %}
+                        </td>
+                        <td class="nombre">{{ c.montant|number_format(0, ',', ' ') }} FCFA</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucune campagne pour l'instant.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% endblock %}
