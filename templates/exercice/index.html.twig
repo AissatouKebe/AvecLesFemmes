@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exercices | Avec les femmes{% endblock %}
+
+{% block body %}
+<main class="contenu">
+    <div class="tete-page">
+        <div>
+            <h1>Exercices</h1>
+            <p class="sous-titre">{{ exercices|length }} exercice{{ exercices|length > 1 ? 's' : '' }} au total</p>
+        </div>
+    </div>
+
+    <section class="panneau" aria-labelledby="titre-liste">
+        <h2 id="titre-liste" class="visuellement-cache">Liste des exercices</h2>
+
+        <div class="defilement">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Groupement</th>
+                        <th scope="col">Période</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Limite des prêts</th>
+                        <th scope="col">Rétribution</th>
+                        <th scope="col" class="nombre">Campagnes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for e in exercices %}
+                    <tr>
+                        <td><a class="nom-groupement" href="{{ path('app_groupement_show', {id: e.groupementId}) }}">{{ e.groupementNom }}</a></td>
+
+                        <td>{{ e.dateDebut|date('d/m/Y') }} – {{ e.dateFin|date('d/m/Y') }}</td>
+                        <td><span class="statut statut--{{ e.statutValue }}">{{ e.statutLabel }}</span></td>
+                        <td>{{ e.dateLimitePret|date('d/m/Y') }}</td>
+                        <td>{{ e.dateRetribution|date('d/m/Y') }}</td>
+                        <td class="nombre">{{ e.nombreCampagnes }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucun exercice pour l'instant.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+{% endblock %}
