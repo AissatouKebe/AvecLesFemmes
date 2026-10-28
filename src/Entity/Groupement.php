@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\GroupementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Enum\StatutExercice;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupementRepository::class)]
@@ -30,10 +31,24 @@ class Groupement
     #[ORM\OneToMany(targetEntity: Campagne::class, mappedBy: 'groupement')]
     private Collection $campagnes;
 
+    /**
+     * @var Collection<int, Exercice>
+     */
+    #[ORM\OneToMany(targetEntity: Exercice::class, mappedBy: 'groupement', orphanRemoval: true)]
+    #[ORM\OrderBy(['dateDebut' => 'DESC'])]
+    private Collection $exercices;
+
+    #[ORM\Column(length: 20)]
+    private ?string $tel = null;
+
+    #[ORM\Column(length: 250)]
+    private ?string $adresse = null;
+
     public function __construct()
     {
         $this->membres = new ArrayCollection();
         $this->campagnes = new ArrayCollection();
+        $this->exercices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,5 +126,70 @@ class Groupement
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Exercice>
+     */
+    public function getExercices(): Collection
+    {
+        return $this->exercices;
+    }
+
+    public function addExercice(Exercice $exercice): static
+    {
+        if (!$this->exercices->contains($exercice)) {
+            $this->exercices->add($exercice);
+            $exercice->setGroupement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercice(Exercice $exercice): static
+    {
+        if ($this->exercices->removeElement($exercice)) {
+            // set the owning side to null (unless already changed)
+            if ($exercice->getGroupement() === $this) {
+                $exercice->setGroupement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(string $tel): static
+    {
+        $this->tel = $tel;
+
+        return $this;
+    }
+
+    public function getAdresse(): ?string
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(string $adresse): static
+    {
+        $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    public function getExerciceEnCours(): ?Exercice
+    {
+        foreach ($this->exercices as $exercice) {
+            if ($exercice->getStatut() === StatutExercice::ENCOURS) {
+                return $exercice;
+            }
+        }
+
+        return null;
     }
 }

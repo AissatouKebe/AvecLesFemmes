@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'utilisateur')]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
-#[ORM\DiscriminatorMap(['membre' => Membre::class])]
+#[ORM\DiscriminatorMap(['membre' => Membre::class, 'supadmin' => SupAdmin::class])]
 abstract class User
 {
     #[ORM\Id]
@@ -61,7 +61,7 @@ abstract class User
         return $this;
     }
 
-    public function getadresse(): ?string
+    public function getAdresse(): ?string
     {
         return $this->adresse;
     }
@@ -73,12 +73,12 @@ abstract class User
         return $this;
     }
 
-    public function getlogin(): ?string
+    public function getLogin(): ?string
     {
         return $this->login;
     }
 
-    public function setlogin(string $login): static
+    public function setLogin(string $login): static
     {
         $this->login = $login;
 

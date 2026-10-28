@@ -5,14 +5,17 @@ namespace App\Entity;
 use App\Repository\CampagneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Trait\DateTimeTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CampagneRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap(['epargne' => Epargne::class, 'tontine' => Tontine::class])]
 abstract class Campagne
 {
+    use DateTimeTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -30,12 +33,6 @@ abstract class Campagne
     #[ORM\Column]
     private ?float $montant = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $updatedAt = null;
-
     #[ORM\ManyToOne(inversedBy: 'campagnes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Groupement $groupement = null;
@@ -51,6 +48,9 @@ abstract class Campagne
      */
     #[ORM\OneToMany(targetEntity: Seance::class, mappedBy: 'campagne')]
     private Collection $seances;
+
+    #[ORM\ManyToOne(inversedBy: 'campagnes')]
+    private ?Exercice $exercice = null;
 
     public function __construct()
     {
@@ -111,29 +111,6 @@ abstract class Campagne
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTime $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
 
     public function getGroupement(): ?Groupement
     {
@@ -203,6 +180,18 @@ abstract class Campagne
                 $seance->setCampagne(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExercice(): ?Exercice
+    {
+        return $this->exercice;
+    }
+
+    public function setExercice(?Exercice $exercice): static
+    {
+        $this->exercice = $exercice;
 
         return $this;
     }
