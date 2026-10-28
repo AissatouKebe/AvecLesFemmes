@@ -49,6 +49,9 @@ abstract class Campagne
     #[ORM\OneToMany(targetEntity: Seance::class, mappedBy: 'campagne')]
     private Collection $seances;
 
+    #[ORM\ManyToOne(inversedBy: 'campagnes')]
+    private ?Exercice $exercice = null;
+
     public function __construct()
     {
         $this->modeCotisations = new ArrayCollection();
@@ -177,6 +180,18 @@ abstract class Campagne
                 $seance->setCampagne(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExercice(): ?Exercice
+    {
+        return $this->exercice;
+    }
+
+    public function setExercice(?Exercice $exercice): static
+    {
+        $this->exercice = $exercice;
 
         return $this;
     }
