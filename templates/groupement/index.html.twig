@@ -10,6 +10,11 @@
             <p class="sous-titre">{{ pagination.total }} groupement{{ pagination.total > 1 ? 's' : '' }} suivi{{ pagination.total > 1 ? 's' : '' }}</p>
         </div>
     </div>
+    
+        {% for message in app.flashes('success') %}
+            <p class="alerte">{{ message }}</p>
+        {% endfor %}
+        <p><a href="{{ path('app_groupement_new') }}">Nouveau groupement</a></p>
 
     <section class="panneau" aria-labelledby="titre-liste">
         <div class="filtre" data-ville="{{ filtre.ville }}" data-tel="{{ filtre.tel }}" data-url="{{ path('app_groupement_index') }}">

@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau groupement | Avec les femmes{% endblock %}
+
+{% block body %}
+<main class="contenu">
+    <div class="tete-page">
+        <div>
+            <h1>Nouveau groupement</h1>
+        </div>
+    </div>
+
+    <section class="panneau">
+        <div id="formulaire" data-url="{{ path('app_groupement_create') }}">
+            <div>
+                <label for="nom">Nom</label>
+                <input type="text" id="nom">
+                <span class="erreur" data-champ="nom"></span>
+            </div>
+            <div>
+                <label for="tel">Téléphone</label>
+                <input type="text" id="tel" placeholder="77 123 45 67">
+                <span class="erreur" data-champ="tel"></span>
+            </div>
+            <div>
+                <label for="adresse">Adresse</label>
+                <input type="text" id="adresse">
+                <span class="erreur" data-champ="adresse"></span>
+            </div>
+
+            <span class="erreur" data-champ="_global"></span>
+            <button type="button" id="btn-enregistrer">Enregistrer</button>
+            <a href="{{ path('app_groupement_index') }}">Annuler</a>
+        </div>
+
+        <script>
+            (function () {
+                const bloc = document.getElementById('formulaire');
+
+                async function enregistrer() {
+                    bloc.querySelectorAll('.erreur').forEach(e => e.textContent = '');
+
+                    const donnees = {
+                        nom: document.getElementById('nom').value,
+                        tel: document.getElementById('tel').value,
+                        adresse: document.getElementById('adresse').value,
+                    };
+
+                    const reponse = await fetch(bloc.dataset.url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(donnees),
+                    });
+                    const corps = await reponse.json();
+
+                    if (reponse.ok) {
+                        window.location.href = corps.redirect;
+                        return;
+                    }
+
+                    for (const [champ, message] of Object.entries(corps.erreurs ?? {})) {
+                        const zone = bloc.querySelector('.erreur[data-champ="' + champ + '"]');
+                        if (zone) zone.textContent = message;
+                    }
+                }
+
+                document.getElementById('btn-enregistrer').addEventListener('click', enregistrer);
+            })();
+        </script>
+    </section>
+</main>
+{% endblock %}
