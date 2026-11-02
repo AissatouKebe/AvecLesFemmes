@@ -17,27 +17,22 @@ class GroupementRepository extends ServiceEntityRepository
         parent::__construct($registry, Groupement::class);
     }
 
-        /**
-     * Affiche + filtre + pagine en une seule requête (les exercices sont chargés par la jointure).
+    /**
+     * Affiche + recherche (ville ou téléphone) + pagine en une seule requête.
      *
      * @return Paginator<Groupement>
      */
-    public function rechercher(?string $ville, ?string $tel, int $page, int $parPage): Paginator
+    public function rechercher(?string $recherche, int $page, int $parPage): Paginator
     {
         $qb = $this->createQueryBuilder('g')
             ->leftJoin('g.exercices', 'e')
             ->addSelect('e')
             ->orderBy('g.nom', 'ASC');
 
-        if ($ville !== null) {
-            // pas de champ ville : on cherche dans l'adresse
-            $qb->andWhere('LOWER(g.adresse) LIKE :ville')
-               ->setParameter('ville', '%' . mb_strtolower($ville) . '%');
-        }
-
-        if ($tel !== null) {
-            $qb->andWhere('g.tel LIKE :tel')
-               ->setParameter('tel', '%' . $tel . '%');
+        if ($recherche !== null) {
+            // pas de champ ville : on cherche dans l'adresse, ou dans le téléphone
+            $qb->andWhere('(LOWER(g.adresse) LIKE :q OR g.tel LIKE :q)')
+               ->setParameter('q', '%' . mb_strtolower($recherche) . '%');
         }
 
         $qb->setFirstResult(($page - 1) * $parPage)

@@ -21,12 +21,11 @@ class GroupementService
     public function lister(GroupementFiltreDto $filtre): PageDto
     {
         $paginator = $this->groupementRepository->rechercher(
-            $filtre->ville,
-            $filtre->tel,
+            $filtre->recherche,
             $filtre->page,
             $filtre->parPage,
         );
-
+        
         // mapping : entités -> DTO de sortie
         $dtos = array_map(
             fn(Groupement $groupement) => $this->versDto($groupement),
@@ -51,7 +50,7 @@ class GroupementService
             $groupement->getExercices()->count(),
         );
     }
-    
+
         public function creer(GroupementFormDto $dto): Groupement
     {
         $groupement = new Groupement();

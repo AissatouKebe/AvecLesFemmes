@@ -21,8 +21,7 @@ class GroupementController extends AbstractController
     public function index(Request $request, GroupementService $groupementService): Response
     {
         $filtre = new GroupementFiltreDto(
-            ville: $request->query->get('ville'),
-            tel: $request->query->get('tel'),
+            recherche: $request->query->get('q'),
             page: $request->query->getInt('page', 1),
         );
 
