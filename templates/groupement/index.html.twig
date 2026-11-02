@@ -7,11 +7,17 @@
     <div class="tete-page">
         <div>
             <h1>Groupements</h1>
-            <p class="sous-titre">{{ groupements|length }} groupement{{ groupements|length > 1 ? 's' : '' }} suivi{{ groupements|length > 1 ? 's' : '' }}</p>
+            <p class="sous-titre">{{ pagination.total }} groupement{{ pagination.total > 1 ? 's' : '' }} suivi{{ pagination.total > 1 ? 's' : '' }}</p>
         </div>
     </div>
 
     <section class="panneau" aria-labelledby="titre-liste">
+        <div class="filtre" data-ville="{{ filtre.ville }}" data-tel="{{ filtre.tel }}" data-url="{{ path('app_groupement_index') }}">
+            <input type="text" id="ville" value="{{ filtre.ville }}" placeholder="Ville">
+            <input type="text" id="tel" value="{{ filtre.tel }}" placeholder="Téléphone">
+            <button type="button" id="btn-filtrer">Filtrer</button>
+        </div>
+
         <h2 id="titre-liste" class="visuellement-cache">Liste des groupements</h2>
 
         <div class="defilement">
@@ -53,6 +59,57 @@
                 </tbody>
             </table>
         </div>
+
+        {% if pagination.totalPages > 1 %}
+            <nav class="pagination" aria-label="Pagination">
+                {% if pagination.numero > 1 %}
+                    <a href="{{ path('app_groupement_index', {ville: filtre.ville, tel: filtre.tel, page: pagination.numero - 1}) }}" aria-label="Page précédente">&lt;</a>
+                {% else %}
+                    <span aria-hidden="true">&lt;</span>
+                {% endif %}
+
+                <span>Page {{ pagination.numero }} sur {{ pagination.totalPages }}</span>
+
+                {% if pagination.numero < pagination.totalPages %}
+                    <a href="{{ path('app_groupement_index', {ville: filtre.ville, tel: filtre.tel, page: pagination.numero + 1}) }}" aria-label="Page suivante">&gt;</a>
+                {% else %}
+                    <span aria-hidden="true">&gt;</span>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+        <script>
+            (function () {
+                const bloc = document.querySelector('.filtre');
+                const champVille = document.getElementById('ville');
+                const champTel = document.getElementById('tel');
+
+                function filtrer() {
+                    const ville = champVille.value.trim();
+                    const tel = champTel.value.trim();
+
+                    // même filtre déjà appliqué : un nouvel appui le retire
+                    const dejaApplique = (bloc.dataset.ville !== '' || bloc.dataset.tel !== '')
+                        && ville === bloc.dataset.ville && tel === bloc.dataset.tel;
+
+                    if (dejaApplique) {
+                        window.location.href = bloc.dataset.url;
+                        return;
+                    }
+
+                    const params = new URLSearchParams();
+                    if (ville) params.set('ville', ville);
+                    if (tel) params.set('tel', tel);
+
+                    window.location.href = params.toString() ? bloc.dataset.url + '?' + params.toString() : bloc.dataset.url;
+                }
+
+                document.getElementById('btn-filtrer').addEventListener('click', filtrer);
+                bloc.querySelectorAll('input').forEach(champ => {
+                    champ.addEventListener('keydown', e => { if (e.key === 'Enter') filtrer(); });
+                });
+            })();
+        </script>
     </section>
 </main>
 {% endblock %}
