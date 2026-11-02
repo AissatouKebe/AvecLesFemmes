@@ -172,60 +172,82 @@ h2 { font-size: 1.35rem; }
   margin-bottom: 1.5rem;
 }
  
-/* ---------- Boutons ---------- */
-.bouton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.55rem 1.15rem;
-  border: 2px solid var(--indigo);
-  border-radius: var(--rayon);
-  background: var(--indigo);
-  color: var(--sur-indigo);
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
+/* Boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: .6rem;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .15s;
 }
- 
-.bouton--secondaire {
-  background: transparent;
-  color: var(--indigo);
+.btn--primaire { background: #1f7a4d; color: #fff; }
+.btn--primaire:hover { background: #17613c; }
+.btn--secondaire { background: transparent; color: #444; border-color: #cfd6d2; }
+.btn--secondaire:hover { background: #f2f5f3; }
+.btn[disabled] { opacity: .6; cursor: wait; }
+
+/* En-tête avec bouton à droite */
+.tete-page--actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
- 
-.bouton:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
- 
-.groupe-boutons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
- 
-/* ---------- Recherche ---------- */
-.recherche { margin-bottom: 1.25rem; }
- 
-.recherche label {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 0.35rem;
-}
- 
+
+/* Barre de recherche */
+.recherche { display: flex; gap: .5rem; margin-bottom: 1rem; }
 .recherche input {
-  width: 100%;
-  max-width: 26rem;
-  min-height: 44px;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid var(--encre-douce);
-  border-radius: var(--rayon);
-  background: var(--surface);
-  color: var(--encre);
-  font: inherit;
+    flex: 1;
+    padding: .65rem .9rem;
+    border: 1px solid #cfd6d2;
+    border-radius: .6rem;
+    font: inherit;
 }
+
+/* Message de succès */
+.alerte {
+    padding: .75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: .6rem;
+    background: #e8f5ee;
+    color: #17613c;
+}
+
+/* Formulaire */
+.carte-formulaire {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 1.75rem;
+    background: #000000bb;
+    border: 1px solid #e3e8e5;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+}
+.champ { margin-bottom: 1.15rem; }
+.champ label { display: block; margin-bottom: .35rem; font-weight: 600; }
+.champ input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: .7rem .9rem;
+    border: 1px solid #cfd6d2;
+    border-radius: .6rem;
+    font: inherit;
+}
+.recherche input:focus, .champ input:focus { outline: 2px solid #1f7a4d; outline-offset: 1px; }
+.champ input.invalide { border-color: #c0392b; background: #fdf3f2; }
+.aide { display: block; margin-top: .3rem; font-size: .85rem; color: #6b7770; }
+.erreur { display: block; margin-top: .3rem; font-size: .875rem; color: #c0392b; }
+.erreur:empty { display: none; }
+.actions-formulaire { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1.5rem; }
+ 
+
  
 /* ---------- Tableaux ---------- */
 .defilement { overflow-x: auto; }

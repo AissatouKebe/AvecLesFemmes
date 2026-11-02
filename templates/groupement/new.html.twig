@@ -7,64 +7,98 @@
     <div class="tete-page">
         <div>
             <h1>Nouveau groupement</h1>
+            <p class="sous-titre">Renseigne les informations du groupement.</p>
         </div>
     </div>
 
     <section class="panneau">
-        <div id="formulaire" data-url="{{ path('app_groupement_create') }}">
-            <div>
-                <label for="nom">Nom</label>
-                <input type="text" id="nom">
+        <div class="carte-formulaire" id="formulaire" data-url="{{ path('app_groupement_create') }}">
+            <div class="champ">
+                <label for="nom">Nom du groupement</label>
+                <input type="text" id="nom" maxlength="100" placeholder="Ex : GIE Teranga Mbour" autocomplete="off">
                 <span class="erreur" data-champ="nom"></span>
             </div>
-            <div>
+
+            <div class="champ">
                 <label for="tel">Téléphone</label>
-                <input type="text" id="tel" placeholder="77 123 45 67">
+                <input type="tel" id="tel" maxlength="20" placeholder="77 123 45 67" autocomplete="off">
+                <span class="aide">Chiffres, espaces et + uniquement.</span>
                 <span class="erreur" data-champ="tel"></span>
             </div>
-            <div>
+
+            <div class="champ">
                 <label for="adresse">Adresse</label>
-                <input type="text" id="adresse">
+                <input type="text" id="adresse" maxlength="250" placeholder="Ex : Mbour, quartier Escale" autocomplete="off">
                 <span class="erreur" data-champ="adresse"></span>
+
             </div>
 
             <span class="erreur" data-champ="_global"></span>
-            <button type="button" id="btn-enregistrer">Enregistrer</button>
-            <a href="{{ path('app_groupement_index') }}">Annuler</a>
+
+            <div class="actions-formulaire">
+                <a class="btn btn--secondaire" href="{{ path('app_groupement_index') }}">Annuler</a>
+                <button type="button" id="btn-enregistrer" class="btn btn--primaire">Enregistrer</button>
+            </div>
         </div>
 
         <script>
             (function () {
                 const bloc = document.getElementById('formulaire');
+                const bouton = document.getElementById('btn-enregistrer');
+                const champs = ['nom', 'tel', 'adresse'];
 
-                async function enregistrer() {
+                function effacerErreurs() {
                     bloc.querySelectorAll('.erreur').forEach(e => e.textContent = '');
-
-                    const donnees = {
-                        nom: document.getElementById('nom').value,
-                        tel: document.getElementById('tel').value,
-                        adresse: document.getElementById('adresse').value,
-                    };
-
-                    const reponse = await fetch(bloc.dataset.url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                        body: JSON.stringify(donnees),
-                    });
-                    const corps = await reponse.json();
-
-                    if (reponse.ok) {
-                        window.location.href = corps.redirect;
-                        return;
-                    }
-
-                    for (const [champ, message] of Object.entries(corps.erreurs ?? {})) {
-                        const zone = bloc.querySelector('.erreur[data-champ="' + champ + '"]');
-                        if (zone) zone.textContent = message;
-                    }
+                    champs.forEach(c => document.getElementById(c).classList.remove('invalide'));
                 }
 
-                document.getElementById('btn-enregistrer').addEventListener('click', enregistrer);
+                async function enregistrer() {
+                    effacerErreurs();
+                    bouton.disabled = true;
+                    bouton.textContent = 'Enregistrement...';
+
+                    const donnees = {};
+                    champs.forEach(c => donnees[c] = document.getElementById(c).value);
+
+                    try {
+                        const reponse = await fetch(bloc.dataset.url, {
+                            method: 'POST',
+
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify(donnees),
+                        });
+                        const corps = await reponse.json();
+
+                        if (reponse.ok) {
+                            window.location.href = corps.redirect;
+                            return;
+                        }
+
+                        let premier = null;
+                        for (const [champ, message] of Object.entries(corps.erreurs ?? {})) {
+                            const zone = bloc.querySelector('.erreur[data-champ="' + champ + '"]');
+                            if (zone) zone.textContent = message;
+
+                            const input = document.getElementById(champ);
+                            if (input) {
+                                input.classList.add('invalide');
+                                premier = premier ?? input;
+                            }
+                        }
+                        if (premier) premier.focus();
+                    } catch (e) {
+                        bloc.querySelector('.erreur[data-champ="_global"]').textContent = 'Impossible d\'envoyer le formulaire. Réessaie.';
+                    }
+
+                    bouton.disabled = false;
+                    bouton.textContent = 'Enregistrer';
+                }
+
+                bouton.addEventListener('click', enregistrer);
+                bloc.querySelectorAll('input').forEach(champ => {
+
+                    champ.addEventListener('keydown', e => { if (e.key === 'Enter') enregistrer(); });
+                });
             })();
         </script>
     </section>
