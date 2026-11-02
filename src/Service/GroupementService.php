@@ -7,22 +7,25 @@ use App\Dto\GroupementListeDto;
 use App\Dto\PageDto;
 use App\Entity\Groupement;
 use App\Repository\GroupementRepository;
+use App\Dto\GroupementFormDto;
+use Doctrine\ORM\EntityManagerInterface;
 
 class GroupementService
 {
-    public function __construct(private readonly GroupementRepository $groupementRepository)
-    {
+    public function __construct(
+        private readonly GroupementRepository $groupementRepository,
+        private readonly EntityManagerInterface $em,
+    ) {
     }
 
     public function lister(GroupementFiltreDto $filtre): PageDto
     {
         $paginator = $this->groupementRepository->rechercher(
-            $filtre->ville,
-            $filtre->tel,
+            $filtre->recherche,
             $filtre->page,
             $filtre->parPage,
         );
-
+        
         // mapping : entités -> DTO de sortie
         $dtos = array_map(
             fn(Groupement $groupement) => $this->versDto($groupement),
@@ -46,5 +49,18 @@ class GroupementService
             $exercice?->getDateDebut(),
             $groupement->getExercices()->count(),
         );
+    }
+
+        public function creer(GroupementFormDto $dto): Groupement
+    {
+        $groupement = new Groupement();
+        $groupement->setNom($dto->nom);
+        $groupement->setTel($dto->tel);
+        $groupement->setAdresse($dto->adresse);
+
+        $this->em->persist($groupement);
+        $this->em->flush();
+
+        return $groupement;
     }
 }

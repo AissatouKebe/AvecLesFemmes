@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Dto\GroupementFiltreDto;
 use Symfony\Component\HttpFoundation\Request;
+use App\Dto\GroupementFormDto;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/groupements')]
 class GroupementController extends AbstractController
@@ -17,8 +21,7 @@ class GroupementController extends AbstractController
     public function index(Request $request, GroupementService $groupementService): Response
     {
         $filtre = new GroupementFiltreDto(
-            ville: $request->query->get('ville'),
-            tel: $request->query->get('tel'),
+            recherche: $request->query->get('q'),
             page: $request->query->getInt('page', 1),
         );
 
@@ -37,5 +40,44 @@ class GroupementController extends AbstractController
         return $this->render('groupement/show.html.twig', [
             'groupement' => $groupement,
         ]);
+    }
+
+        #[Route('/nouveau', name: 'app_groupement_new', methods: ['GET'])]
+    public function new(): Response
+    {
+        return $this->render('groupement/new.html.twig');
+    }
+
+    #[Route('', name: 'app_groupement_create', methods: ['POST'])]
+    public function create(Request $request, GroupementService $groupementService, ValidatorInterface $validator): JsonResponse
+    {
+        try {
+            $donnees = $request->toArray();
+        } catch (JsonException) {
+            return $this->json(['erreurs' => ['_global' => 'Données invalides']], Response::HTTP_BAD_REQUEST);
+        }
+
+        $texte = fn(string $cle): string => is_string($donnees[$cle] ?? null) ? trim($donnees[$cle]) : '';
+
+        $dto = new GroupementFormDto(
+            nom: $texte('nom'),
+            tel: $texte('tel'),
+            adresse: $texte('adresse'),
+        );
+
+        $violations = $validator->validate($dto);
+        if (count($violations) > 0) {
+            $erreurs = [];
+            foreach ($violations as $violation) {
+                $erreurs[$violation->getPropertyPath()] = $violation->getMessage();
+            }
+
+            return $this->json(['erreurs' => $erreurs], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $groupementService->creer($dto);
+        $this->addFlash('success', 'Groupement enregistré');
+
+        return $this->json(['redirect' => $this->generateUrl('app_groupement_index')], Response::HTTP_CREATED);
     }
 }
